@@ -18,7 +18,7 @@ func GenerateKey(bits int) (privateKey *rsa.PrivateKey, privateKeyBytes []byte, 
 
 	publicKeyASN1, _ := x509.MarshalPKIXPublicKey(&privateKey.PublicKey)
 	publicKeyBytes = pem.EncodeToMemory(&pem.Block{
-		Type:  "RSA PUBLIC KEY",
+		Type:  "PUBLIC KEY",
 		Bytes: publicKeyASN1,
 	})
 	return

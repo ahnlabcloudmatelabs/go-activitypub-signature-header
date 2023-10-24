@@ -52,7 +52,7 @@ if err != nil {
 algorithm := crypto.SHA256
 date := signature_header.Date()
 digest := signature_header.Digest(algorithm, message)
-signature, err := src.Signature{
+signature, err := signature_header.Signature{
   PrivateKey: privateKey,
   Algorithm:  algorithm,
   Date:       date,
