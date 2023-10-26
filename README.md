@@ -109,6 +109,24 @@ err := verifier.VerifyWithActor("https://yodangang.express/@juunini")
 err := verifier.VerifyWithBody([]byte("{...}"))
 ```
 
+### Parse `Signature` header
+
+```go
+import (
+  signature_header "github.com/cloudmatelabs/go-activitypub-signature-header"
+)
+
+// map[string]string
+params := signature_header.ParseSignature(signature)
+// or given Signature authorization header
+// params := signature_header.ParseSignature(authorization)
+
+params["keyId"]
+params["algorithm"]
+params["headers"]
+params["signature"]
+```
+
 ## License
 
 [MIT](LICENSE)

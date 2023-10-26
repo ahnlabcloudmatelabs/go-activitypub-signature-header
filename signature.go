@@ -62,3 +62,20 @@ digest: %s`,
 		fmt.Sprintf(`signature="%s"`, signature),
 	}, ","), nil
 }
+
+func ParseSignature(signatureStr string) map[string]string {
+	parsedSignature := map[string]string{}
+
+	for _, param := range strings.Split(strings.Replace(signatureStr, "Signature ", "", 1), ",") {
+		split := strings.Split(param, "=")
+		key := split[0]
+		value := strings.ReplaceAll(
+			strings.Join(split[1:], "="),
+			`"`, "",
+		)
+
+		parsedSignature[key] = value
+	}
+
+	return parsedSignature
+}
