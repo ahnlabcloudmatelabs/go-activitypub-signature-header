@@ -32,12 +32,13 @@ And verify the `Signature` header.
 ```go
 import (
   "crypto"
+  "net/url"
 
   "github.com/go-resty/resty/v2"
   signature_header "github.com/cloudmatelabs/go-activitypub-signature-header"
 )
 
-privateKeyBytes := []byte("-----BEGIN RSA PRIVATE KEY-----...")
+requestURL, _ := url.Parse("https://yodangang.express/users/9iffvxhojp/inbox")
 message := []byte(`{
   "@context": "https://www.w3.org/ns/activitystreams",
   "id": "https://snippet.social/@juunini",
@@ -45,18 +46,14 @@ message := []byte(`{
   "actor": "https://snippet.social/@juunini",
   "object": "https://yodangang.express/users/9iffvxhojp"
 }`)
-host := "yodangang.express"
-path := "/users/9iffvxhojp/inbox"
-keyID := "https://snippet.social/@juunini#main-key"
-algorithm := crypto.SHA256
 
 headers, err := signature_header.Generate(signature_header.GenerateInput{
-  PrivateKeyBytes: privateKeyBytes,
-  Algorithm:       algorithm,
-  Host:            host,
-  Path:            path,
+  PrivateKeyBytes: []byte("-----BEGIN RSA PRIVATE KEY-----..."),
+  Algorithm:       crypto.SHA256,
+  Host:            requestURL.Host,
+  Path:            requestURL.Path,
   Body:            message,
-  KeyID:           keyID,
+  KeyID:           "https://snippet.social/@juunini#main-key",
 })
 if err != nil {
   // handle error
@@ -69,7 +66,7 @@ resty.New().R().
   SetHeader("Host", headers.Host).
   SetHeader("Signature", headers.Signature).
   SetHeader("Content-Type", "application/activity+json").
-  Post("https://" + host + path)
+  Post(requestURL.String())
 ```
 
 ### Verify `Signature` header
