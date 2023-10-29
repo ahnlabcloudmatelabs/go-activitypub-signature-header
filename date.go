@@ -1,7 +1,9 @@
 package signature_header
 
-import "time"
+import (
+	"time"
+)
 
 func Date() string {
-	return time.Now().In(time.UTC).Format(time.RFC1123)
+	return time.Now().In(time.FixedZone("GMT", 0)).Format(time.RFC1123)
 }
