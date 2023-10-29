@@ -82,30 +82,28 @@ func Test_VerifyWithBody(t *testing.T) {
 
 func createSignature() map[string]string {
 	message := []byte(requestMessage)
-	host := "snippet.social"
-	path := "/@juunini/inbox"
-	keyID := "http://localhost:8000/@juunini#main-key"
+	const host = "snippet.social"
+	const path = "/@juunini/inbox"
+	const keyID = "http://localhost:8000/@juunini#main-key"
+	const algorithm = crypto.SHA256
 
-	privateKey, _ := signature_header.PrivateKeyFromBytes([]byte(privateKeyStr))
-
-	algorithm := crypto.SHA256
-	date := signature_header.Date()
-	digest := signature_header.Digest(algorithm, message)
-	signature, _ := signature_header.Signature{
-		PrivateKey: privateKey,
-		Algorithm:  algorithm,
-		Date:       date,
-		Digest:     digest,
-		Host:       host,
-		Path:       path,
-		KeyID:      keyID,
-	}.String()
+	headers, err := signature_header.Generate(signature_header.GenerateInput{
+		PrivateKeyBytes: []byte(privateKeyStr),
+		Algorithm:       algorithm,
+		Host:            host,
+		Path:            path,
+		Body:            message,
+		KeyID:           keyID,
+	})
+	if err != nil {
+		panic(err)
+	}
 
 	return map[string]string{
-		"Signature":    signature,
-		"Date":         date,
-		"Host":         host,
-		"Digest":       digest,
+		"Signature":    headers.Signature,
+		"Date":         headers.Date,
+		"Host":         headers.Host,
+		"Digest":       headers.Digest,
 		"Content-Type": "application/activity+json",
 	}
 }

@@ -37,45 +37,37 @@ import (
   signature_header "github.com/cloudmatelabs/go-activitypub-signature-header"
 )
 
-const privateKeyBytes = []byte("-----BEGIN RSA PRIVATE KEY-----...")
-const message = []byte(`{
+privateKeyBytes := []byte("-----BEGIN RSA PRIVATE KEY-----...")
+message := []byte(`{
   "@context": "https://www.w3.org/ns/activitystreams",
-  "id": "https://snippet.cloudmt.co.kr/@juunini",
+  "id": "https://snippet.social/@juunini",
   "type": "Follow",
-  "actor": "https://snippet.cloudmt.co.kr/@juunini",
+  "actor": "https://snippet.social/@juunini",
   "object": "https://yodangang.express/users/9iffvxhojp"
 }`)
-const host := "yodangang.express"
-const path := "/users/9iffvxhojp/inbox"
-const keyID := "https://snippet.cloudmt.co.kr/@juunini#main-key"
-
-privateKey, err := signature_header.PrivateKeyFromBytes(privateKeyBytes)
-if err != nil {
-  // handle error
-}
-
+host := "yodangang.express"
+path := "/users/9iffvxhojp/inbox"
+keyID := "https://snippet.social/@juunini#main-key"
 algorithm := crypto.SHA256
-date := signature_header.Date()
-digest := signature_header.Digest(algorithm, message)
-signature, err := signature_header.Signature{
-  PrivateKey: privateKey,
-  Algorithm:  algorithm,
-  Date:       date,
-  Digest:     digest,
-  Host:       host,
-  Path:       path,
-  KeyID:      keyID,
-}.String()
+
+headers, err := signature_header.Generate(signature_header.GenerateInput{
+  PrivateKeyBytes: privateKeyBytes,
+  Algorithm:       algorithm,
+  Host:            host,
+  Path:            path,
+  Body:            message,
+  KeyID:           keyID,
+})
 if err != nil {
   // handle error
 }
 
 resty.New().R().
   SetBody(message).
-  SetHeader("Date", date).
-  SetHeader("Digest", digest).
-  SetHeader("Host", host).
-  SetHeader("Signature", signature).
+  SetHeader("Date", headers.Date).
+  SetHeader("Digest", headers.Digest).
+  SetHeader("Host", headers.Host).
+  SetHeader("Signature", headers.Signature).
   SetHeader("Content-Type", "application/activity+json").
   Post("https://" + host + path)
 ```
