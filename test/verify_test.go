@@ -2,7 +2,6 @@ package signature_header_test
 
 import (
 	"context"
-	"crypto"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
@@ -85,11 +84,9 @@ func createSignature() map[string]string {
 	const host = "snippet.social"
 	const path = "/@juunini/inbox"
 	const keyID = "http://localhost:8000/@juunini#main-key"
-	const algorithm = crypto.SHA256
 
 	headers, err := signature_header.Generate(signature_header.GenerateInput{
 		PrivateKeyBytes: []byte(privateKeyStr),
-		Algorithm:       algorithm,
 		Host:            host,
 		Path:            path,
 		Body:            message,

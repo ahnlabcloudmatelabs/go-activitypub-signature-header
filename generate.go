@@ -1,6 +1,8 @@
 package signature_header
 
-import "crypto"
+import (
+	"crypto"
+)
 
 /*
 Example:
@@ -41,6 +43,10 @@ Example:
 	})
 */
 func Generate(input GenerateInput) (*GenerateOutput, error) {
+	if input.Algorithm == 0 {
+		input.Algorithm = crypto.SHA256
+	}
+
 	date := Date()
 	digest := Digest(input.Algorithm, input.Body)
 

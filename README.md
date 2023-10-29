@@ -49,7 +49,7 @@ message := []byte(`{
 
 headers, err := signature_header.Generate(signature_header.GenerateInput{
   PrivateKeyBytes: []byte("-----BEGIN RSA PRIVATE KEY-----..."),
-  Algorithm:       crypto.SHA256,
+  // Algorithm:       crypto.SHA256, // optional. if not set, default is crypto.SHA256
   Host:            requestURL.Host,
   Path:            requestURL.Path,
   Body:            message,
